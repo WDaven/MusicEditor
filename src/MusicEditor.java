@@ -1,11 +1,13 @@
 import javax.swing.*;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Hashtable;
 
 public class MusicEditor {
     public MusicEditor() {
+        Dimension buttonBoxSize = new Dimension(200,200);
+        Dimension accidentalsSliderSize = new Dimension(200, 600);
         JFrame frame = new JFrame("My Music Editor");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // tell the content pane to use BorderLayout to manage children
@@ -14,9 +16,15 @@ public class MusicEditor {
         //ToolPanel
         JPanel toolPanel = new JPanel();
         toolPanel.setLayout(new BoxLayout(toolPanel, 1));
+        toolPanel.setPreferredSize(new Dimension(200,600));
+        JPanel toolPanelHolder = new JPanel();
+        JPanel dummyPanel = new JPanel();
+        toolPanelHolder.add(toolPanel);
+        toolPanelHolder.add(dummyPanel);
 
         // Select and Pen Buttons
         Box selectPenBox = new Box(0);
+        selectPenBox.setPreferredSize(buttonBoxSize);
         JButton penButton = new JButton("Pen");
         JButton selectButton = new JButton("Select");
         selectPenBox.add(selectButton);
@@ -25,6 +33,7 @@ public class MusicEditor {
 
         //New Staff and Delete Staff
         Box editStaffBox = new Box(0);
+        editStaffBox.setPreferredSize(buttonBoxSize);
         JButton addStaffButton = new JButton("Add Staff");
         JButton deleteStaffButton = new JButton("Delete Staff");
         editStaffBox.add(addStaffButton);
@@ -33,6 +42,7 @@ public class MusicEditor {
 
         //Play and Stop
         Box playStopBox = new Box(0);
+        playStopBox.setPreferredSize(buttonBoxSize);
         JButton playButton = new JButton("Play");
         JButton stopButton = new JButton("Stop");
         playStopBox.add(playButton);
@@ -86,6 +96,7 @@ public class MusicEditor {
         toolPanel.add(new JSeparator());
 
         Box accidentalsSlider = new Box(0);
+        accidentalsSlider.setPreferredSize(accidentalsSliderSize);
         accidentalsSlider.add(accidentalsBox);
         accidentalsSlider.add(noteTypeSlider);
         toolPanel.add(accidentalsSlider);
@@ -119,13 +130,13 @@ public class MusicEditor {
 
         // note that when we add component, we have to indicate which they go into
         frame.getContentPane().add(menu, BorderLayout.NORTH);
-        frame.getContentPane().add(toolPanel, BorderLayout.CENTER);
+        frame.getContentPane().add(toolPanelHolder, BorderLayout.WEST);
         JLabel label = new JLabel("This is a static text label");
         frame.getContentPane().add(label, BorderLayout.SOUTH);
         JButton button = new JButton("Click to close");
         // use of Lambda expressions for event listeners.
         button.addActionListener(e -> System.exit(0));
-        frame.getContentPane().add(button, BorderLayout.EAST);
+        frame.getContentPane().add(button, BorderLayout.CENTER);
         frame.pack();
         frame.show();
     }
