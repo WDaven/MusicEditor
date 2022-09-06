@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Hashtable;
 
 public class MusicEditor {
     public MusicEditor() {
@@ -20,7 +21,7 @@ public class MusicEditor {
         JButton selectButton = new JButton("Select");
         selectPenBox.add(selectButton);
         selectPenBox.add(penButton);
-        selectPenBox.add(new JSeparator());
+
 
         //New Staff and Delete Staff
         Box editStaffBox = new Box(0);
@@ -28,11 +29,66 @@ public class MusicEditor {
         JButton deleteStaffButton = new JButton("Delete Staff");
         editStaffBox.add(addStaffButton);
         editStaffBox.add(deleteStaffButton);
-        selectPenBox.add(new JSeparator());
+
+
+        //Play and Stop
+        Box playStopBox = new Box(0);
+        JButton playButton = new JButton("Play");
+        JButton stopButton = new JButton("Stop");
+        playStopBox.add(playButton);
+        playStopBox.add(stopButton);
+
+        //Accidentals
+        Box accidentalsBox = new Box(1);
+        JRadioButton noteButton = new JRadioButton("Note");
+        noteButton.setSelected(true);
+
+        JRadioButton restButton = new JRadioButton("Rest");
+        JRadioButton flatButton = new JRadioButton("Flat");
+        JRadioButton sharpButton = new JRadioButton("Sharp");
+
+        ButtonGroup accidentalsGroup = new ButtonGroup();
+        accidentalsGroup.add(noteButton);
+        accidentalsGroup.add(restButton);
+        accidentalsGroup.add(flatButton);
+        accidentalsGroup.add(sharpButton);
+
+        accidentalsBox.add(noteButton);
+        accidentalsBox.add(restButton);
+        accidentalsBox.add(flatButton);
+        accidentalsBox.add(sharpButton);
+
+        //Note Type slider
+        Box noteTypeBox = new Box(1);
+        JSlider noteTypeSlider = new JSlider(JSlider.VERTICAL, 0, 100, 100);
+        noteTypeSlider.setMajorTickSpacing(25);
+        noteTypeSlider.setSnapToTicks(true);
+        Hashtable labelTable = new Hashtable();
+        labelTable.put(new Integer(100), new JLabel("Sixteenth"));
+        labelTable.put(new Integer(75), new JLabel("Eighth"));
+        labelTable.put(new Integer(50), new JLabel("Quarter"));
+        labelTable.put(new Integer(25), new JLabel("Half"));
+        labelTable.put(new Integer(0), new JLabel("Whole"));
+        noteTypeSlider.setLabelTable(labelTable);
+        noteTypeSlider.setPaintLabels(true);
+        noteTypeBox.add(noteTypeSlider);
+
+
+
+
 
 
         toolPanel.add(selectPenBox);
+        toolPanel.add(new JSeparator());
         toolPanel.add(editStaffBox);
+        toolPanel.add(new JSeparator());
+        toolPanel.add(playStopBox);
+        toolPanel.add(new JSeparator());
+
+        Box accidentalsSlider = new Box(0);
+        accidentalsSlider.add(accidentalsBox);
+        accidentalsSlider.add(noteTypeSlider);
+        toolPanel.add(accidentalsSlider);
 
 
 
