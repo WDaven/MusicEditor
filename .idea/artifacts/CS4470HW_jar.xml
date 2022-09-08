@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CS4470HW:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CS4470HW_jar</output-path>
+    <root id="archive" name="CS4470HW.jar">
+      <element id="module-output" name="CS4470HW" />
+    </root>
+  </artifact>
+</component>
