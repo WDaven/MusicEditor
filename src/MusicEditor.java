@@ -1,17 +1,22 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import static java.lang.Integer.valueOf;
 
 public class MusicEditor {
-    int staffNumber = 4;
+    public int staffNumber = 4;
     public MusicEditor() {
-        JLabel staffText = new JLabel("<html>My Music Editor<br/>Showing " + staffNumber  +" Staves</html>", SwingConstants.CENTER);
+        MusicView staffPane = new MusicView(staffNumber);
+        staffPane.setPreferredSize(new Dimension(800,700));
+        JScrollPane musicViewScroll = new JScrollPane(staffPane);
         Dimension buttonBoxSize = new Dimension(200,200);
         Dimension accidentalsSliderSize = new Dimension(200, 600);
         JMenuItem editDeleteStaff = new JMenuItem("Delete Staff");
@@ -64,12 +69,19 @@ public class MusicEditor {
         addStaffButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 label.setText("Add Staff has been selected");
                 staffNumber++;
-                staffText.setText("<html>My Music Editor<br/>Showing " + staffNumber  +" Staves</html>");
+                //staffText.setText("<html>My Music Editor<br/>Showing " + staffNumber  +" Staves</html>");
                 if (staffNumber == 2) {
                     editDeleteStaff.setEnabled(true);
                     deleteStaffButton.setEnabled(true);
+                }
+                staffPane.addStaff();
+                staffPane.repaint();
+                if (staffNumber > 7) {
+                    staffPane.setPreferredSize(new Dimension(800,700 + (staffNumber - 7) * 100));
+                    staffPane.invalidate();
                 }
             }
         });
@@ -79,11 +91,18 @@ public class MusicEditor {
             public void actionPerformed(ActionEvent e) {
                 label.setText("Delete Staff has been selected");
                 staffNumber--;
-                staffText.setText("<html>My Music Editor<br/>Showing " + staffNumber  +" Staves</html>");
+                //staffText.setText("<html>My Music Editor<br/>Showing " + staffNumber  +" Staves</html>");
                 if (staffNumber == 1) {
                     editDeleteStaff.setEnabled(false);
                     deleteStaffButton.setEnabled(false);
                 }
+                staffPane.deleteStaff();
+                staffPane.repaint();
+                if (staffNumber < 8) {
+                    staffPane.setPreferredSize(new Dimension(800,700));
+                    staffPane.invalidate();
+                }
+
             }
         });
 
@@ -201,10 +220,16 @@ public class MusicEditor {
             public void actionPerformed(ActionEvent e) {
                 label.setText("Edit Staff Add has been selected");
                 staffNumber++;
-                staffText.setText("<html>My Music Editor<br/>Showing " + staffNumber  +" Staves</html>");
+                //staffText.setText("<html>My Music Editor<br/>Showing " + staffNumber  +" Staves</html>");
                 if (staffNumber == 2) {
                     editDeleteStaff.setEnabled(true);
                     deleteStaffButton.setEnabled(true);
+                }
+                staffPane.addStaff();
+                staffPane.repaint();
+                if (staffNumber > 7) {
+                    staffPane.setPreferredSize(new Dimension(800,700 + (staffNumber - 7) * 80));
+                    staffPane.invalidate();
                 }
             }
         });
@@ -214,11 +239,18 @@ public class MusicEditor {
             public void actionPerformed(ActionEvent e) {
                 label.setText("Edit Delete Staff has been selected");
                 staffNumber--;
-                staffText.setText("<html>My Music Editor<br/>Showing " + staffNumber  +" Staves</html>");
+                //staffText.setText("<html>My Music Editor<br/>Showing " + staffNumber  +" Staves</html>");
                 if (staffNumber == 1) {
                     editDeleteStaff.setEnabled(false);
                     deleteStaffButton.setEnabled(false);
                 }
+                staffPane.deleteStaff();
+                staffPane.repaint();
+                if (staffNumber < 8) {
+                    staffPane.setPreferredSize(new Dimension(800,700));
+                    staffPane.invalidate();
+                }
+
             }
         });
         edit.add(editNewStaff);
@@ -227,16 +259,12 @@ public class MusicEditor {
         menu.add(file);
         menu.add(edit);
 
-        //Staves section
-        staffText.setFont(new Font("Serif", Font.PLAIN, 30));
-        JScrollPane staffPane = new JScrollPane(staffText);
-        staffPane.setPreferredSize(new Dimension(600,600));
 
         // note that when we add component, we have to indicate which they go into
         frame.getContentPane().add(menu, BorderLayout.NORTH);
         frame.getContentPane().add(toolPanelHolder, BorderLayout.WEST);
         frame.getContentPane().add(label, BorderLayout.SOUTH);
-        frame.getContentPane().add(staffPane, BorderLayout.CENTER);
+        frame.getContentPane().add(musicViewScroll, BorderLayout.CENTER);
         frame.pack();
         frame.show();
     }
@@ -251,6 +279,98 @@ public class MusicEditor {
     }
 }
 
+class MusicView extends JComponent {
+    int staffNumber;
+    public MusicView(int staffNumber) {
+        super();
+        this.staffNumber=staffNumber;
+    }
+    public void addStaff() {
+        staffNumber++;
+    }
+    public void deleteStaff() {
+        staffNumber--;
+    }
+    ArrayList<DrawStaff> StaffList = new ArrayList<>();
 
-// use of Lambda expressions for event listeners.
-//button.addActionListener(e -> System.exit(0));
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.drawRect(0,0,800,700);
+        for (int i =0; i < staffNumber; i++) {
+            if (i + 1 < staffNumber) {
+                StaffList.add(new DrawStaff(25, 25 + 90 * i, false, g));
+            } else {
+                StaffList.add(new DrawStaff(25, 25 + 90 * i, true, g));
+            }
+        }
+    }
+}
+
+class DrawStaff {
+    int x;
+    int y;
+    boolean lastStaff;
+    public Image trebleClefImage;
+    Image commonTimeImage;
+    Image flatImage;
+    Image sharpImage;
+    Image naturalImage;
+    Image sixteenthNoteImage;
+    Image eightNoteImage;
+    Image quarterNoteImage;
+    Image quarterRestImage;
+    Image wholeNoteImage;
+    Image wholeRestImage;
+    Image halfNoteImage;
+    Image halfRestImage;
+    Image eightRestImage;
+    Image sixteenthRestImage;
+
+    {
+        try {
+            trebleClefImage = ImageIO.read(getClass().getResource("/images/trebleClef.png"));
+            commonTimeImage = ImageIO.read(getClass().getResource("/images/commonTime.png"));
+
+            flatImage = ImageIO.read(getClass().getResource("/images/flat.png"));
+            sharpImage = ImageIO.read(getClass().getResource("/images/sharp.png"));
+            naturalImage = ImageIO.read(getClass().getResource("/images/natural.png"));
+
+            sixteenthNoteImage = ImageIO.read(getClass().getResource("/images/sixteenthNote.png"));
+            eightNoteImage = ImageIO.read(getClass().getResource("/images/eighthNote.png"));
+            quarterNoteImage = ImageIO.read(getClass().getResource("/images/quarterNote.png"));
+            halfNoteImage = ImageIO.read(getClass().getResource("/images/halfNote.png"));
+            wholeNoteImage = ImageIO.read(getClass().getResource("/images/wholeNote.png"));
+
+            sixteenthRestImage = ImageIO.read(getClass().getResource("/images/sixteenthRest.png"));
+            eightRestImage = ImageIO.read(getClass().getResource("/images/eighthRest.png"));
+            quarterRestImage = ImageIO.read(getClass().getResource("/images/quarterRest.png"));
+            halfRestImage = ImageIO.read(getClass().getResource("/images/halfRest.png"));
+            wholeRestImage = ImageIO.read(getClass().getResource("/images/wholeRest.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public DrawStaff(){};
+    public DrawStaff(int x, int y,boolean lastStaff, Graphics g ) {
+        this.x = x;
+        this.y = y;
+        this.lastStaff = lastStaff;
+        g.drawLine(x,y, x+750, y);
+        g.drawLine(x,y + 15, x+750, y+15);
+        g.drawLine(x,y + 30, x+750, y+30);
+        g.drawLine(x,y + 45, x+750, y+45);
+        g.drawLine(x,y + 60, x+750, y+60);
+        g.drawLine(x,y,x,y+60);
+        g.drawImage(trebleClefImage, x, y,40,60, null);
+        if (lastStaff) {
+            g.drawLine(x+740, y, x+740, y+60);
+            g.fillRect(x+745, y, 6, 60);
+
+        } else {
+            g.drawLine(x+750, y, x+750, y+60);
+        }
+
+    }
+}
+
