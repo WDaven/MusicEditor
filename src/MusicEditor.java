@@ -12,8 +12,6 @@ import static java.lang.Integer.valueOf;
 
 public class MusicEditor {
     public int staffNumber = 4;
-    public int duration = 0;
-    public
     public MusicEditor() {
         MusicView staffPane = new MusicView(staffNumber);
         staffPane.setPreferredSize(new Dimension(825,700));
@@ -180,16 +178,13 @@ public class MusicEditor {
                 //gets the values from the Note Sluder, then fetches the key-value pair from the table then cast that
                 //to a Jlabel then runs getText on the Jlabel and finalls sets the label text
                 label.setText(((JLabel) labelTable.get(noteTypeSlider.getValue())).getText() +  " has been selected");
+                staffPane.setDuration(((JLabel) labelTable.get(noteTypeSlider.getValue())).getText());
+
             }
 
         });
 
         noteTypeBox.add(noteTypeSlider);
-
-
-
-
-
 
         toolPanel.add(selectPenBox);
         toolPanel.add(new JSeparator());
@@ -291,6 +286,31 @@ public class MusicEditor {
 }
 
 class MusicView extends JComponent implements MouseListener, MouseMotionListener {
+    public int duration = 0;
+    public String type = "b";
+    Graphics g = null;
+    public void setDuration(String duration) {
+        switch(duration) {
+            case "Sixteenth":
+                this.duration = 16;
+                break;
+            case "Eighth":
+                this.duration = 8;
+                break;
+            case "quarter":
+                this.duration = 4;
+                break;
+            case "half":
+                this.duration = 2;
+                break;
+            case "whole":
+                this.duration = 1;
+                break;
+        }
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
     int staffNumber;
     public MusicView(int staffNumber) {
         super();
@@ -314,17 +334,21 @@ class MusicView extends JComponent implements MouseListener, MouseMotionListener
             } else {
                 StaffList.add(new DrawStaff(25, 25 + 90 * i, true, g));
             }
+            this.g = g;
         }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
+        System.out.print("pressed");
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        NoteList.add(new RestNote(getMousePosition().x, getMousePosition().y,  ))
+        NoteList.add(new RestNote(getMousePosition().x, getMousePosition().y, "none", duration, type, g));
+        RestNote curr = NoteList.get(NoteList.size()-1);
+        curr.paint(getMousePosition().x, getMousePosition().y, "none", duration, type, g);
+        System.out.print("pressed");
     }
 
     @Override
@@ -421,20 +445,55 @@ class DrawStaff {
 }
 
 class RestNote {
+    Image sixteenthNoteImage;
+    Image eightNoteImage;
+    Image quarterNoteImage;
+    Image quarterRestImage;
+    Image wholeNoteImage;
+    Image wholeRestImage;
+    Image halfNoteImage;
+    Image halfRestImage;
+    Image eightRestImage;
+    Image sixteenthRestImage;
+    Image flatImage;
+    Image sharpImage;
+    Image naturalImage;
+    {
+        try {
+
+            flatImage = ImageIO.read(getClass().getResource("/images/flat.png"));
+            sharpImage = ImageIO.read(getClass().getResource("/images/sharp.png"));
+            naturalImage = ImageIO.read(getClass().getResource("/images/natural.png"));
+
+            sixteenthNoteImage = ImageIO.read(getClass().getResource("/images/sixteenthNote.png"));
+            eightNoteImage = ImageIO.read(getClass().getResource("/images/eighthNote.png"));
+            quarterNoteImage = ImageIO.read(getClass().getResource("/images/quarterNote.png"));
+            halfNoteImage = ImageIO.read(getClass().getResource("/images/halfNote.png"));
+            wholeNoteImage = ImageIO.read(getClass().getResource("/images/wholeNote.png"));
+
+            sixteenthRestImage = ImageIO.read(getClass().getResource("/images/sixteenthRest.png"));
+            eightRestImage = ImageIO.read(getClass().getResource("/images/eighthRest.png"));
+            quarterRestImage = ImageIO.read(getClass().getResource("/images/quarterRest.png"));
+            halfRestImage = ImageIO.read(getClass().getResource("/images/halfRest.png"));
+            wholeRestImage = ImageIO.read(getClass().getResource("/images/wholeRest.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     int duration;
     int xLocation;
     int yLocation;
     String pitch;
     String type;
-    RestNote(int xLocation, int yLocation, String pitch, int duration, String type) {
+    RestNote(int xLocation, int yLocation, String pitch, int duration, String type, Graphics g) {
         this.duration = duration;
         this.xLocation = xLocation;
         this.yLocation = yLocation;
         this.pitch = pitch;
         this.type =type;
-        paint(xLocation, yLocation, pitch, duration, type);
+        paint(xLocation, yLocation, pitch, duration, type, g);
     }
-    public void paint(int xLocation, int yLocation, String pitch, int duration, String type) {
-
+    public void paint(int xLocation, int yLocation, String pitch, int duration, String type, Graphics g) {
+        g.drawImage(halfNoteImage, xLocation, yLocation,20,30, null);
     }
 }
