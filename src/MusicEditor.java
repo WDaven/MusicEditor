@@ -12,6 +12,8 @@ import static java.lang.Integer.valueOf;
 
 public class MusicEditor {
     public int staffNumber = 4;
+    public int duration = 0;
+    public
     public MusicEditor() {
         MusicView staffPane = new MusicView(staffNumber);
         staffPane.setPreferredSize(new Dimension(825,700));
@@ -423,6 +425,7 @@ class RestNote {
     int xLocation;
     int yLocation;
     String pitch;
+    boolean Note;
     RestNote(int xLocation, int yLocation, String pitch, int duration) {
         this.duration = duration;
         this.xLocation = xLocation;
