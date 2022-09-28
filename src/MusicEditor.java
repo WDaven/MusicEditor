@@ -305,7 +305,6 @@ class MusicView extends JComponent {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawRect(0,0,800,700);
         for (int i =0; i < staffNumber; i++) {
             if (i + 1 < staffNumber) {
                 StaffList.add(new DrawStaff(25, 25 + 90 * i, false, g));
