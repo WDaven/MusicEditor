@@ -11,25 +11,6 @@
   <component name="ChangeListManager">
     <list default="true" id="7777cc7c-1ab3-4d41-bcef-d48cabfffd4f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/commonTime.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/commonTime.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/eighthNote.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/eighthNote.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/eighthRest.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/eighthRest.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/endStaff3Bars.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/endStaff3Bars.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/endStaff4Bars.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/endStaff4Bars.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/flat.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/flat.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/halfNote.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/halfNote.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/halfRest.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/halfRest.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/natural.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/natural.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/normalStaff3Bars.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/normalStaff3Bars.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/normalStaff4Bars.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/normalStaff4Bars.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/quarterNote.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/quarterNote.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/quarterRest.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/quarterRest.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/sharp.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/sharp.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/sixteenthNote.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/sixteenthNote.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/sixteenthRest.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/sixteenthRest.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/trebleClef.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/trebleClef.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/wholeNote.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/wholeNote.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/wholeRest.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/images/wholeRest.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MusicEditor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MusicEditor.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -102,7 +83,7 @@
       <workItem from="1662501523027" duration="7223000" />
       <workItem from="1664236550462" duration="596000" />
       <workItem from="1664302496758" duration="2929000" />
-      <workItem from="1664322967482" duration="7655000" />
+      <workItem from="1664322967482" duration="9102000" />
     </task>
     <servers />
   </component>

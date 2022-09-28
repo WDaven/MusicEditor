@@ -15,8 +15,10 @@ public class MusicEditor {
     public int staffNumber = 4;
     public MusicEditor() {
         MusicView staffPane = new MusicView(staffNumber);
-        staffPane.setPreferredSize(new Dimension(800,700));
+        staffPane.setPreferredSize(new Dimension(825,700));
+        staffPane.setSize(new Dimension(825,700));
         JScrollPane musicViewScroll = new JScrollPane(staffPane);
+        //musicViewScroll.setPreferredSize(new Dimension(800,700));
         Dimension buttonBoxSize = new Dimension(200,200);
         Dimension accidentalsSliderSize = new Dimension(200, 600);
         JMenuItem editDeleteStaff = new JMenuItem("Delete Staff");
@@ -81,7 +83,7 @@ public class MusicEditor {
                 staffPane.repaint();
                 if (staffNumber > 7) {
                     staffPane.setPreferredSize(new Dimension(800,700 + (staffNumber - 7) * 100));
-                    staffPane.invalidate();
+                    musicViewScroll.setViewportView(staffPane);
                 }
             }
         });
@@ -98,9 +100,12 @@ public class MusicEditor {
                 }
                 staffPane.deleteStaff();
                 staffPane.repaint();
-                if (staffNumber < 8) {
+                if (staffNumber == 7) {
                     staffPane.setPreferredSize(new Dimension(800,700));
-                    staffPane.invalidate();
+                    musicViewScroll.setViewportView(staffPane);
+                } else if (staffNumber > 8) {
+                    staffPane.setPreferredSize(new Dimension(800,700 + (staffNumber - 7) * 100));
+                    musicViewScroll.setViewportView(staffPane);
                 }
 
             }
@@ -229,7 +234,8 @@ public class MusicEditor {
                 staffPane.repaint();
                 if (staffNumber > 7) {
                     staffPane.setPreferredSize(new Dimension(800,700 + (staffNumber - 7) * 80));
-                    staffPane.invalidate();
+                    staffPane.setSize(new Dimension(800,700 + (staffNumber - 7) * 80));
+                    musicViewScroll.setViewportView(staffPane);
                 }
             }
         });
@@ -246,9 +252,12 @@ public class MusicEditor {
                 }
                 staffPane.deleteStaff();
                 staffPane.repaint();
-                if (staffNumber < 8) {
+                if (staffNumber == 7) {
                     staffPane.setPreferredSize(new Dimension(800,700));
-                    staffPane.invalidate();
+                    musicViewScroll.setViewportView(staffPane);
+                } else if (staffNumber > 8) {
+                    staffPane.setPreferredSize(new Dimension(800,700 + (staffNumber - 7) * 100));
+                    musicViewScroll.setViewportView(staffPane);
                 }
 
             }
