@@ -3,8 +3,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -19,6 +18,7 @@ public class MusicEditor {
         staffPane.setSize(new Dimension(825,700));
         JScrollPane musicViewScroll = new JScrollPane(staffPane);
         //musicViewScroll.setPreferredSize(new Dimension(800,700));
+
         Dimension buttonBoxSize = new Dimension(200,200);
         Dimension accidentalsSliderSize = new Dimension(200, 600);
         JMenuItem editDeleteStaff = new JMenuItem("Delete Staff");
@@ -288,7 +288,7 @@ public class MusicEditor {
     }
 }
 
-class MusicView extends JComponent {
+class MusicView extends JComponent implements MouseListener, MouseMotionListener {
     int staffNumber;
     public MusicView(int staffNumber) {
         super();
@@ -301,6 +301,7 @@ class MusicView extends JComponent {
         staffNumber--;
     }
     ArrayList<DrawStaff> StaffList = new ArrayList<>();
+    ArrayList<RestNote> NoteList = new ArrayList<>();
 
     @Override
     public void paintComponent(Graphics g) {
@@ -312,6 +313,41 @@ class MusicView extends JComponent {
                 StaffList.add(new DrawStaff(25, 25 + 90 * i, true, g));
             }
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        NoteList.add(new RestNote(getMousePosition().x, getMousePosition().y,  ))
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
     }
 }
 
@@ -382,3 +418,19 @@ class DrawStaff {
     }
 }
 
+class RestNote {
+    int duration;
+    int xLocation;
+    int yLocation;
+    String pitch;
+    RestNote(int xLocation, int yLocation, String pitch, int duration) {
+        this.duration = duration;
+        this.xLocation = xLocation;
+        this.yLocation = yLocation;
+        this.pitch = pitch;
+        paint(xLocation, yLocation, pitch, duration);
+    }
+    public void paint(int xLocation, int yLocation, String pitch, int duration) {
+
+    }
+}
