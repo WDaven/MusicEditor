@@ -425,15 +425,16 @@ class RestNote {
     int xLocation;
     int yLocation;
     String pitch;
-    boolean Note;
-    RestNote(int xLocation, int yLocation, String pitch, int duration) {
+    String type;
+    RestNote(int xLocation, int yLocation, String pitch, int duration, String type) {
         this.duration = duration;
         this.xLocation = xLocation;
         this.yLocation = yLocation;
         this.pitch = pitch;
-        paint(xLocation, yLocation, pitch, duration);
+        this.type =type;
+        paint(xLocation, yLocation, pitch, duration, type);
     }
-    public void paint(int xLocation, int yLocation, String pitch, int duration) {
+    public void paint(int xLocation, int yLocation, String pitch, int duration, String type) {
 
     }
 }
