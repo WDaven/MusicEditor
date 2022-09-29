@@ -19,6 +19,8 @@ public class MusicEditor {
         JScrollPane musicViewScroll = new JScrollPane(staffPane);
         //musicViewScroll.setPreferredSize(new Dimension(800,700));
 
+
+
         Dimension buttonBoxSize = new Dimension(200,200);
         Dimension accidentalsSliderSize = new Dimension(200, 600);
         JMenuItem editDeleteStaff = new JMenuItem("Delete Staff");
@@ -137,10 +139,22 @@ public class MusicEditor {
         Box accidentalsBox = new Box(1);
         JRadioButton noteButton = new JRadioButton("Note");
         noteButton.setSelected(true);
-        noteButton.addActionListener(e -> label.setText("Note has been selected"));
+        noteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                label.setText("Note has been selected");
+                staffPane.setType("Note");
+            }
+        });
 
         JRadioButton restButton = new JRadioButton("Rest");
-        restButton.addActionListener(e -> label.setText("Rest has been selected"));
+        restButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                label.setText("Rest has been selected");
+                staffPane.setType("Rest");
+            }
+        });
         JRadioButton flatButton = new JRadioButton("Flat");
         flatButton.addActionListener(e -> label.setText("Flat has been selected"));
         JRadioButton sharpButton = new JRadioButton("Sharp");
@@ -179,7 +193,6 @@ public class MusicEditor {
                 //to a Jlabel then runs getText on the Jlabel and finalls sets the label text
                 label.setText(((JLabel) labelTable.get(noteTypeSlider.getValue())).getText() +  " has been selected");
                 staffPane.setDuration(((JLabel) labelTable.get(noteTypeSlider.getValue())).getText());
-
             }
 
         });
@@ -286,9 +299,10 @@ public class MusicEditor {
 }
 
 class MusicView extends JComponent implements MouseListener, MouseMotionListener {
-    public int duration = 0;
-    public String type = "b";
+    public int duration = 16;
+    public String type = "Note";
     Graphics g = null;
+
     public void setDuration(String duration) {
         switch(duration) {
             case "Sixteenth":
@@ -297,13 +311,13 @@ class MusicView extends JComponent implements MouseListener, MouseMotionListener
             case "Eighth":
                 this.duration = 8;
                 break;
-            case "quarter":
+            case "Quarter":
                 this.duration = 4;
                 break;
-            case "half":
+            case "Half":
                 this.duration = 2;
                 break;
-            case "whole":
+            case "Whole":
                 this.duration = 1;
                 break;
         }
@@ -312,9 +326,12 @@ class MusicView extends JComponent implements MouseListener, MouseMotionListener
         this.type = type;
     }
     int staffNumber;
+    RestNote curr;
     public MusicView(int staffNumber) {
         super();
         this.staffNumber=staffNumber;
+        this.addMouseListener(this);
+        this.addMouseMotionListener(this);
     }
     public void addStaff() {
         staffNumber++;
@@ -336,18 +353,21 @@ class MusicView extends JComponent implements MouseListener, MouseMotionListener
             }
             this.g = g;
         }
+        for (int i = 0; i < NoteList.size(); i++) {
+            NoteList.get(i).paint(NoteList.get(i).xLocation, NoteList.get(i).yLocation, "none", NoteList.get(i).duration, NoteList.get(i).type, g);
+        }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.print("pressed");
+        System.out.print("clicked");
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
         NoteList.add(new RestNote(getMousePosition().x, getMousePosition().y, "none", duration, type, g));
-        RestNote curr = NoteList.get(NoteList.size()-1);
-        curr.paint(getMousePosition().x, getMousePosition().y, "none", duration, type, g);
+        curr = NoteList.get(NoteList.size()-1);
+        this.repaint();
         System.out.print("pressed");
     }
 
@@ -368,7 +388,9 @@ class MusicView extends JComponent implements MouseListener, MouseMotionListener
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        curr.xLocation=getMousePosition().x;
+        curr.yLocation = getMousePosition().y;
+        this.repaint();
     }
 
     @Override
@@ -458,6 +480,7 @@ class RestNote {
     Image flatImage;
     Image sharpImage;
     Image naturalImage;
+    Image curr;
     {
         try {
 
@@ -494,6 +517,50 @@ class RestNote {
         paint(xLocation, yLocation, pitch, duration, type, g);
     }
     public void paint(int xLocation, int yLocation, String pitch, int duration, String type, Graphics g) {
-        g.drawImage(halfNoteImage, xLocation, yLocation,20,30, null);
+        if ((duration == 16) && (type.equals("Note"))) {
+            g.drawImage(sixteenthNoteImage, xLocation, yLocation,20,30, null);
+        }
+        if ((duration == 8) && (type.equals("Note"))) {
+            g.drawImage(eightNoteImage, xLocation, yLocation,20,30, null);
+        }
+        if ((duration == 4) && (type.equals("Note"))) {
+            g.drawImage(quarterNoteImage, xLocation, yLocation,20,30, null);
+        }
+        if ((duration == 2) && (type.equals("Note"))) {
+            g.drawImage(halfNoteImage, xLocation, yLocation,20,30, null);
+        }
+        if ((duration == 0) && (type.equals("Note"))) {
+            g.drawImage(wholeNoteImage, xLocation, yLocation,20,30, null);
+        }
+        if ((duration == 16) && (type.equals("Note"))) {
+            g.drawImage(sixteenthNoteImage, xLocation, yLocation,20,30, null);
+        }
+        if ((duration == 8) && (type.equals("Note"))) {
+            g.drawImage(eightNoteImage, xLocation, yLocation,20,30, null);
+        }
+        if ((duration == 4) && (type.equals("Note"))) {
+            g.drawImage(quarterNoteImage, xLocation, yLocation,20,30, null);
+        }
+        if ((duration == 2) && (type.equals("Note"))) {
+            g.drawImage(halfNoteImage, xLocation, yLocation,20,30, null);
+        }
+        if ((duration == 1) && (type.equals("Note"))) {
+            g.drawImage(wholeNoteImage, xLocation, yLocation,20,30, null);
+        }
+        if ((duration == 16) && (type.equals("Rest"))) {
+            g.drawImage(sixteenthRestImage, xLocation, yLocation,20,30, null);
+        }
+        if ((duration == 8) && (type.equals("Rest"))) {
+            g.drawImage(eightRestImage, xLocation, yLocation,20,30, null);
+        }
+        if ((duration == 4) && (type.equals("Rest"))) {
+            g.drawImage(quarterRestImage, xLocation, yLocation,20,30, null);
+        }
+        if ((duration == 2) && (type.equals("Rest"))) {
+            g.drawImage(halfRestImage, xLocation, yLocation,20,30, null);
+        }
+        if ((duration == 1) && (type.equals("Rest"))) {
+            g.drawImage(wholeRestImage, xLocation, yLocation, 20, 30, null);
+        }
     }
 }

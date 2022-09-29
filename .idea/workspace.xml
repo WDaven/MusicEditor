@@ -101,7 +101,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/MusicEditor.java</url>
-          <line>491</line>
+          <line>514</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
