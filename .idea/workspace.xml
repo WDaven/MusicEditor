@@ -39,7 +39,11 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "node.js.selected.package.tslint": "(autodetect)"
+    "WebServerToolWindowFactoryState": "false",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -79,6 +83,7 @@
       <workItem from="1664334391114" duration="832000" />
       <workItem from="1664377700173" duration="2246000" />
       <workItem from="1664380393498" duration="2227000" />
+      <workItem from="1664420458550" duration="1583000" />
     </task>
     <servers />
   </component>
@@ -101,7 +106,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/MusicEditor.java</url>
-          <line>514</line>
+          <line>555</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>

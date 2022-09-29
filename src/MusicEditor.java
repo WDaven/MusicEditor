@@ -51,6 +51,7 @@ public class MusicEditor {
             @Override
             public void actionPerformed(ActionEvent e) {
                 label.setText("Pen has been selected");
+                staffPane.setSelectMode(false);
             }
         });
 
@@ -58,6 +59,7 @@ public class MusicEditor {
             @Override
             public void actionPerformed(ActionEvent e) {
                 label.setText("Select has been selected");
+                staffPane.setSelectMode(true);
             }
         });
 
@@ -298,10 +300,15 @@ public class MusicEditor {
     }
 }
 
-class MusicView extends JComponent implements MouseListener, MouseMotionListener {
+class MusicView extends JComponent implements MouseListener, MouseMotionListener, KeyListener {
     public int duration = 16;
     public String type = "Note";
     Graphics g = null;
+    public boolean selectMode = false;
+
+    public void setSelectMode(boolean selectMode) {
+        this.selectMode = selectMode;
+    }
 
     public void setDuration(String duration) {
         switch(duration) {
@@ -332,6 +339,7 @@ class MusicView extends JComponent implements MouseListener, MouseMotionListener
         this.staffNumber=staffNumber;
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
+        this.addKeyListener(this);
     }
     public void addStaff() {
         staffNumber++;
@@ -354,26 +362,38 @@ class MusicView extends JComponent implements MouseListener, MouseMotionListener
             this.g = g;
         }
         for (int i = 0; i < NoteList.size(); i++) {
-            NoteList.get(i).paint(NoteList.get(i).xLocation, NoteList.get(i).yLocation, "none", NoteList.get(i).duration, NoteList.get(i).type, g);
+            NoteList.get(i).paint(NoteList.get(i).xLocation, NoteList.get(i).yLocation, "none", NoteList.get(i).duration, NoteList.get(i).type, g, NoteList.get(i).selected);
         }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.print("clicked");
+        grabFocus();
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        NoteList.add(new RestNote(getMousePosition().x, getMousePosition().y, "none", duration, type, g));
-        curr = NoteList.get(NoteList.size()-1);
-        this.repaint();
-        System.out.print("pressed");
+        if (selectMode == false) {
+            NoteList.add(new RestNote(getMousePosition().x, getMousePosition().y, "none", duration, type, g, selectMode));
+            curr = NoteList.get(NoteList.size() - 1);
+            this.repaint();
+
+        } else {
+            for (int i = 0; i < NoteList.size(); i++) {
+                 if (NoteList.get(i).contains(getMousePosition().x, getMousePosition().y)) {
+                    curr = NoteList.get(i);
+                    curr.selected = true;
+                    //selected worked
+                } else {
+                     curr.selected = false;
+                 }
+            }
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        curr.selected = false;
     }
 
     @Override
@@ -386,16 +406,38 @@ class MusicView extends JComponent implements MouseListener, MouseMotionListener
 
     }
 
+
     @Override
     public void mouseDragged(MouseEvent e) {
         curr.xLocation=getMousePosition().x;
         curr.yLocation = getMousePosition().y;
+        curr.selected = true;
         this.repaint();
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
 
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        //System.out.println("removed");
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        System.out.println(e.getKeyCode());
+        if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+            NoteList.remove(curr);
+            System.out.println("removed");
+        }
+        this.repaint();
     }
 }
 
@@ -508,15 +550,27 @@ class RestNote {
     int yLocation;
     String pitch;
     String type;
-    RestNote(int xLocation, int yLocation, String pitch, int duration, String type, Graphics g) {
+    boolean selected;
+    RestNote(int xLocation, int yLocation, String pitch, int duration, String type, Graphics g, boolean selected) {
         this.duration = duration;
         this.xLocation = xLocation;
         this.yLocation = yLocation;
         this.pitch = pitch;
         this.type =type;
-        paint(xLocation, yLocation, pitch, duration, type, g);
+        this.selected = selected;
+        paint(xLocation, yLocation, pitch, duration, type, g, selected);
     }
-    public void paint(int xLocation, int yLocation, String pitch, int duration, String type, Graphics g) {
+    public boolean contains(int x, int y) {
+        if (xLocation <= x && x <= xLocation + 20 && yLocation <= y && y <=yLocation + 30) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public void paint(int xLocation, int yLocation, String pitch, int duration, String type, Graphics g, boolean selected) {
+        if (selected) {
+            g.drawRect(xLocation, yLocation, 20, 30);
+        }
         if ((duration == 16) && (type.equals("Note"))) {
             g.drawImage(sixteenthNoteImage, xLocation, yLocation,20,30, null);
         }
