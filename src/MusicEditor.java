@@ -12,6 +12,12 @@ import static java.lang.Integer.valueOf;
 
 public class MusicEditor {
     public int staffNumber = 4;
+    static JLabel label = new JLabel("This is a static text label");
+
+    public static void setLabel(String newLabel) {
+        label.setText(newLabel);
+    }
+
     public MusicEditor() {
         MusicView staffPane = new MusicView(staffNumber);
         staffPane.setPreferredSize(new Dimension(825,700));
@@ -21,11 +27,14 @@ public class MusicEditor {
 
 
 
+
         Dimension buttonBoxSize = new Dimension(200,200);
         Dimension accidentalsSliderSize = new Dimension(200, 600);
         JMenuItem editDeleteStaff = new JMenuItem("Delete Staff");
 
-        JLabel label = new JLabel("This is a static text label");
+
+
+
         JFrame frame = new JFrame("My Music Editor");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // tell the content pane to use BorderLayout to manage children
@@ -59,7 +68,7 @@ public class MusicEditor {
             @Override
             public void actionPerformed(ActionEvent e) {
                 label.setText("Select has been selected");
-                staffPane.setSelectMode(true);
+                staffPane.setSelectMode(!staffPane.selectMode);
             }
         });
 
@@ -158,9 +167,21 @@ public class MusicEditor {
             }
         });
         JRadioButton flatButton = new JRadioButton("Flat");
-        flatButton.addActionListener(e -> label.setText("Flat has been selected"));
+        flatButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                label.setText("Flat has been selected");
+                staffPane.setType("Flat");
+            }
+        });
         JRadioButton sharpButton = new JRadioButton("Sharp");
-        sharpButton.addActionListener(e -> label.setText("Sharp has been selected"));
+        sharpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                label.setText("Sharp has been selected");
+                staffPane.setType("Sharp");
+            }
+        });
 
         ButtonGroup accidentalsGroup = new ButtonGroup();
         accidentalsGroup.add(noteButton);
@@ -305,6 +326,7 @@ class MusicView extends JComponent implements MouseListener, MouseMotionListener
     public String type = "Note";
     Graphics g = null;
     public boolean selectMode = false;
+    boolean highlightAll = false;
 
     public void setSelectMode(boolean selectMode) {
         this.selectMode = selectMode;
@@ -355,14 +377,18 @@ class MusicView extends JComponent implements MouseListener, MouseMotionListener
         super.paintComponent(g);
         for (int i =0; i < staffNumber; i++) {
             if (i + 1 < staffNumber) {
-                StaffList.add(new DrawStaff(25, 25 + 90 * i, false, g));
+                StaffList.add(new DrawStaff(40, 40 + 145 * i, false, g));
             } else {
-                StaffList.add(new DrawStaff(25, 25 + 90 * i, true, g));
+                StaffList.add(new DrawStaff(40, 40 + 145 * i, true, g));
             }
             this.g = g;
         }
         for (int i = 0; i < NoteList.size(); i++) {
-            NoteList.get(i).paint(NoteList.get(i).xLocation, NoteList.get(i).yLocation, "none", NoteList.get(i).duration, NoteList.get(i).type, g, NoteList.get(i).selected);
+            if (highlightAll) {
+                NoteList.get(i).paint(NoteList.get(i).xLocation, NoteList.get(i).yLocation, "none", NoteList.get(i).duration, NoteList.get(i).type, g, true, NoteList.get(i).accidental);
+            } else {
+                NoteList.get(i).paint(NoteList.get(i).xLocation, NoteList.get(i).yLocation, "none", NoteList.get(i).duration, NoteList.get(i).type, g, NoteList.get(i).selected, NoteList.get(i).accidental);
+            }
         }
     }
 
@@ -374,8 +400,11 @@ class MusicView extends JComponent implements MouseListener, MouseMotionListener
     @Override
     public void mousePressed(MouseEvent e) {
         if (selectMode == false) {
-            NoteList.add(new RestNote(getMousePosition().x, getMousePosition().y, "none", duration, type, g, selectMode));
+            NoteList.add(new RestNote(getMousePosition().x, getMousePosition().y, "none", duration, type, g, selectMode, "none"));
             curr = NoteList.get(NoteList.size() - 1);
+            if (type.equals("Flat") || type.equals("Sharp")){
+                highlightAll = true;
+            }
             this.repaint();
 
         } else {
@@ -394,6 +423,30 @@ class MusicView extends JComponent implements MouseListener, MouseMotionListener
     @Override
     public void mouseReleased(MouseEvent e) {
         curr.selected = false;
+        if (highlightAll) {
+            for (int i = 0; i < NoteList.size(); i++) {
+                if (NoteList.get(i).contains(getMousePosition().x, getMousePosition().y)) {
+                    curr = NoteList.get(i);
+                    curr.accidental = type;
+                } else {
+
+                }
+            }
+            NoteList.remove(NoteList.size()-1);
+        }
+        for (int i = 0; i < NoteList.size(); i++) {
+            if (NoteList.get(i).contains(getMousePosition().x, getMousePosition().y)) {
+                curr.xLocation = NoteList.get(i).xLocation;
+            }
+        }
+        highlightAll =false;
+        if (curr.type == "Note") {
+            MusicEditor.setLabel("Created note " + curr.pitch);
+        }
+
+        this.repaint();
+
+
     }
 
     @Override
@@ -551,70 +604,303 @@ class RestNote {
     String pitch;
     String type;
     boolean selected;
-    RestNote(int xLocation, int yLocation, String pitch, int duration, String type, Graphics g, boolean selected) {
+    String accidental;
+    RestNote(int xLocation, int yLocation, String pitch, int duration, String type, Graphics g, boolean selected, String accidental) {
         this.duration = duration;
         this.xLocation = xLocation;
         this.yLocation = yLocation;
         this.pitch = pitch;
         this.type =type;
         this.selected = selected;
-        paint(xLocation, yLocation, pitch, duration, type, g, selected);
+        this.accidental ="none";
+        paint(xLocation, yLocation, pitch, duration, type, g, selected, accidental);
     }
     public boolean contains(int x, int y) {
-        if (xLocation <= x && x <= xLocation + 20 && yLocation <= y && y <=yLocation + 30) {
+        if (xLocation -10 <= x && x <= xLocation + 45 && yLocation - 10 <= y && y <=yLocation + 60) {
             return true;
         } else {
             return false;
         }
     }
-    public void paint(int xLocation, int yLocation, String pitch, int duration, String type, Graphics g, boolean selected) {
-        if (selected) {
-            g.drawRect(xLocation, yLocation, 20, 30);
+    public String findPitch(int yLocation, int duration){
+        int tempY = yLocation;
+        if (duration == 16) {
+            tempY += 35;
+        } else if (duration == 8) {
+            tempY += 36;
+        } else  if (duration == 4) {
+            tempY +=35;
+        } else if (duration == 2) {
+            tempY +=34;
+        } else {
+            tempY += 6;
+        }
+        if (144 < tempY && tempY < 286 ) {
+            tempY -= 145;
+        } else if (299 < tempY && tempY < 441 ) {
+            tempY -= 290;
+        } else if ( 444 < tempY && tempY < 585) {
+            tempY -= 435;
+        }
+        if (0 < tempY && tempY < 5 ){
+            return ("D6");
+        } else if (7 < tempY && tempY < 13 ) {
+            return ("C6");
+        } else if (14 < tempY && tempY < 21 ) {
+            return ("B5");
+        } else if (22 < tempY && tempY < 28 ) {
+            return ("A5");
+        } else if (29 < tempY && tempY < 36 ) {
+            return ("G5");
+        } else if (37 < tempY && tempY < 43 ) {
+            return ("F5");
+        } else if (44 < tempY && tempY < 51 ) {
+            return ("E5");
+        } else if (52 < tempY && tempY < 58 ) {
+            return ("D5");
+        } else if (59 < tempY && tempY < 66 ) {
+            return ("C5");
+        } else if (67 < tempY && tempY < 73 ) {
+            return ("B4");
+        } else if (74 < tempY && tempY < 81 ) {
+            return ("A4");
+        } else if (82 < tempY && tempY < 88 ) {
+            return ("G4");
+        } else if (89 < tempY && tempY < 97 ) {
+            return ("F4");
+        } else if (97 < tempY && tempY < 103 ) {
+            return ("E4");
+        } else if (104 < tempY && tempY < 111 ) {
+            return ("D4");
+        } else if (112 < tempY && tempY < 118 ) {
+            return ("C4");
+        } else if (119 < tempY && tempY < 126 ) {
+            return ("B3");
+        } else if (127 < tempY && tempY < 133 ) {
+            return ("A4");
+        } else if (134 < tempY && tempY < 141 ) {
+            return ("G3");
+        }
+
+        return "none";
+
+    }
+
+    public void paint(int xLocation, int yLocation, String pitch, int duration, String type, Graphics g, boolean selected, String accidental) {
+        if (type.equals("Note")){
+            this.pitch = findPitch(yLocation, duration);
+        }
+        if (type.equals("Sharp")){
+            g.drawImage(sharpImage, xLocation, yLocation, null);
+            if (selected){
+                g.drawRect(xLocation, yLocation, 8, 24);
+                System.out.println(yLocation);
+            }
+        }
+        if (type.equals("Flat")){
+            g.drawImage(flatImage, xLocation, yLocation, null);
+            if (selected){
+                g.drawRect(xLocation, yLocation, 10, 20);
+                System.out.println(yLocation);
+            }
         }
         if ((duration == 16) && (type.equals("Note"))) {
-            g.drawImage(sixteenthNoteImage, xLocation, yLocation,20,30, null);
+            g.drawImage(sixteenthNoteImage, xLocation, yLocation, null);
+            if (this.pitch.equals("A5")){
+                g.drawLine(xLocation -5 , yLocation +35, xLocation +20, yLocation+35);
+            } else if (this.pitch.equals("B5")) {
+                g.drawLine(xLocation -5 , yLocation +40, xLocation +20, yLocation+40);
+            } else if (this.pitch.equals("C6")){
+                g.drawLine(xLocation -5 , yLocation +35, xLocation +20, yLocation+35);
+                g.drawLine(xLocation -5 , yLocation +45, xLocation +20, yLocation+45);
+            } else if (this.pitch.equals("D6")) {
+                g.drawLine(xLocation -5 , yLocation +40, xLocation +20, yLocation+40);
+                g.drawLine(xLocation -5 , yLocation +50, xLocation +20, yLocation+50);
+            }
+            if (selected){
+                g.drawRect(xLocation, yLocation, 22, 40);
+                System.out.println(yLocation);
+            }
+            if (accidental.equals("Flat")){
+                g.drawImage(flatImage, xLocation, yLocation, null);
+            } else if (accidental.equals("Sharp")) {
+                g.drawImage(sharpImage, xLocation, yLocation, null);
+            }
         }
         if ((duration == 8) && (type.equals("Note"))) {
-            g.drawImage(eightNoteImage, xLocation, yLocation,20,30, null);
+            g.drawImage(eightNoteImage, xLocation, yLocation, null);
+            if (this.pitch.equals("A5")){
+                g.drawLine(xLocation  , yLocation +35, xLocation +30, yLocation+35);
+            } else if (this.pitch.equals("B5")) {
+                g.drawLine(xLocation  , yLocation +40, xLocation +30, yLocation+40);
+            } else if (this.pitch.equals("C6")){
+                g.drawLine(xLocation  , yLocation +35, xLocation +30, yLocation+35);
+                g.drawLine(xLocation  , yLocation +45, xLocation +30, yLocation+45);
+            } else if (this.pitch.equals("D6")) {
+                g.drawLine(xLocation  , yLocation +40, xLocation +30, yLocation+40);
+                g.drawLine(xLocation  , yLocation +50, xLocation +30, yLocation+50);
+            }
+            if (selected){
+                g.drawRect(xLocation, yLocation, 40, 40);
+            }
+            if (accidental.equals("Flat")){
+                g.drawImage(flatImage, xLocation, yLocation, null);
+            } else if (accidental.equals("Sharp")) {
+                g.drawImage(sharpImage, xLocation, yLocation, null);
+            }
         }
         if ((duration == 4) && (type.equals("Note"))) {
-            g.drawImage(quarterNoteImage, xLocation, yLocation,20,30, null);
+            g.drawImage(quarterNoteImage, xLocation, yLocation, null);
+            if (this.pitch.equals("A5")){
+                g.drawLine(xLocation  , yLocation +35, xLocation +30, yLocation+35);
+            } else if (this.pitch.equals("B5")) {
+                g.drawLine(xLocation  , yLocation +40, xLocation +30, yLocation+40);
+            } else if (this.pitch.equals("C6")){
+                g.drawLine(xLocation  , yLocation +35, xLocation +30, yLocation+35);
+                g.drawLine(xLocation  , yLocation +45, xLocation +30, yLocation+45);
+            } else if (this.pitch.equals("D6")) {
+                g.drawLine(xLocation  , yLocation +40, xLocation +30, yLocation+40);
+                g.drawLine(xLocation  , yLocation +50, xLocation +30, yLocation+50);
+            }
+            if (selected){
+                g.drawRect(xLocation, yLocation, 13, 40);
+            }
+            if (accidental.equals("Flat")){
+                g.drawImage(flatImage, xLocation, yLocation, null);
+            } else if (accidental.equals("Sharp")) {
+                g.drawImage(sharpImage, xLocation, yLocation, null);
+            }
         }
         if ((duration == 2) && (type.equals("Note"))) {
-            g.drawImage(halfNoteImage, xLocation, yLocation,20,30, null);
+            g.drawImage(halfNoteImage, xLocation, yLocation, null);
+            if (this.pitch.equals("A5")){
+                g.drawLine(xLocation -5 , yLocation +35, xLocation +20, yLocation+35);
+            } else if (this.pitch.equals("B5")) {
+                g.drawLine(xLocation -5 , yLocation +40, xLocation +20, yLocation+40);
+            } else if (this.pitch.equals("C6")){
+                g.drawLine(xLocation -5 , yLocation +35, xLocation +20, yLocation+35);
+                g.drawLine(xLocation -5 , yLocation +45, xLocation +20, yLocation+45);
+            } else if (this.pitch.equals("D6")) {
+                g.drawLine(xLocation -5 , yLocation +40, xLocation +20, yLocation+40);
+                g.drawLine(xLocation -5 , yLocation +50, xLocation +20, yLocation+50);
+            }
+            if (selected){
+                g.drawRect(xLocation, yLocation, 30, 40);
+            }
+            if (accidental.equals("Flat")){
+                g.drawImage(flatImage, xLocation, yLocation, null);
+            } else if (accidental.equals("Sharp")) {
+                g.drawImage(sharpImage, xLocation, yLocation, null);
+            }
         }
         if ((duration == 0) && (type.equals("Note"))) {
-            g.drawImage(wholeNoteImage, xLocation, yLocation,20,30, null);
+            g.drawImage(wholeNoteImage, xLocation, yLocation, null);
+            if (this.pitch.equals("A5")){
+                g.drawLine(xLocation -5 , yLocation +35, xLocation +50, yLocation+35);
+            } else if (this.pitch.equals("B5")) {
+                g.drawLine(xLocation -5 , yLocation +40, xLocation +50, yLocation+40);
+            } else if (this.pitch.equals("C6")){
+                g.drawLine(xLocation -5 , yLocation +35, xLocation +50, yLocation+35);
+                g.drawLine(xLocation -5 , yLocation +45, xLocation +50, yLocation+45);
+            } else if (this.pitch.equals("D6")) {
+                g.drawLine(xLocation -5 , yLocation +40, xLocation +50, yLocation+40);
+                g.drawLine(xLocation -5 , yLocation +50, xLocation +50, yLocation+50);
+            }
+
+            if (selected){
+                g.drawRect(xLocation, yLocation, 19, 11);
+            }
+            if (accidental.equals("Flat")){
+                g.drawImage(flatImage, xLocation, yLocation, null);
+            } else if (accidental.equals("Sharp")) {
+                g.drawImage(sharpImage, xLocation, yLocation, null);
+            }
         }
         if ((duration == 16) && (type.equals("Note"))) {
-            g.drawImage(sixteenthNoteImage, xLocation, yLocation,20,30, null);
+            g.drawImage(sixteenthNoteImage, xLocation, yLocation, null);
+            if (selected){
+                g.drawRect(xLocation, yLocation, 22, 40);
+            }
+            if (accidental.equals("Flat")){
+                g.drawImage(flatImage, xLocation, yLocation, null);
+            } else if (accidental.equals("Sharp")) {
+                g.drawImage(sharpImage, xLocation, yLocation, null);
+            }
         }
         if ((duration == 8) && (type.equals("Note"))) {
-            g.drawImage(eightNoteImage, xLocation, yLocation,20,30, null);
+            g.drawImage(eightNoteImage, xLocation, yLocation, null);
+            if (selected){
+                g.drawRect(xLocation, yLocation, 40, 40);
+            }
+            if (accidental.equals("Flat")){
+                g.drawImage(flatImage, xLocation, yLocation, null);
+            } else if (accidental.equals("Sharp")) {
+                g.drawImage(sharpImage, xLocation, yLocation, null);
+            }
         }
         if ((duration == 4) && (type.equals("Note"))) {
-            g.drawImage(quarterNoteImage, xLocation, yLocation,20,30, null);
+            g.drawImage(quarterNoteImage, xLocation, yLocation, null);
+            if (selected){
+                g.drawRect(xLocation, yLocation, 13, 40);
+            }
+            if (accidental.equals("Flat")){
+                g.drawImage(flatImage, xLocation, yLocation, null);
+            } else if (accidental.equals("Sharp")) {
+                g.drawImage(sharpImage, xLocation, yLocation, null);
+            }
         }
         if ((duration == 2) && (type.equals("Note"))) {
-            g.drawImage(halfNoteImage, xLocation, yLocation,20,30, null);
+            g.drawImage(halfNoteImage, xLocation, yLocation, null);
+            if (selected){
+                g.drawRect(xLocation, yLocation, 30, 40);
+            }
+            if (accidental.equals("Flat")){
+                g.drawImage(flatImage, xLocation, yLocation, null);
+            } else if (accidental.equals("Sharp")) {
+                g.drawImage(sharpImage, xLocation, yLocation, null);
+            }
         }
         if ((duration == 1) && (type.equals("Note"))) {
-            g.drawImage(wholeNoteImage, xLocation, yLocation,20,30, null);
+            g.drawImage(wholeNoteImage, xLocation, yLocation, null);
+            if (selected){
+                g.drawRect(xLocation, yLocation, 19, 11);
+            }
+            if (accidental.equals("Flat")){
+                g.drawImage(flatImage, xLocation, yLocation, null);
+            } else if (accidental.equals("Sharp")) {
+                g.drawImage(sharpImage, xLocation, yLocation, null);
+            }
         }
         if ((duration == 16) && (type.equals("Rest"))) {
-            g.drawImage(sixteenthRestImage, xLocation, yLocation,20,30, null);
+            g.drawImage(sixteenthRestImage, xLocation, yLocation, null);
+            if (selected){
+                g.drawRect(xLocation, yLocation, 13, 27);
+            }
         }
         if ((duration == 8) && (type.equals("Rest"))) {
-            g.drawImage(eightRestImage, xLocation, yLocation,20,30, null);
+            g.drawImage(eightRestImage, xLocation, yLocation,null);
+            if (selected){
+                g.drawRect(xLocation, yLocation, 10, 20);
+            }
         }
         if ((duration == 4) && (type.equals("Rest"))) {
-            g.drawImage(quarterRestImage, xLocation, yLocation,20,30, null);
+            g.drawImage(quarterRestImage, xLocation, yLocation, null);
+            if (selected){
+                g.drawRect(xLocation, yLocation, 11, 28);
+            }
         }
         if ((duration == 2) && (type.equals("Rest"))) {
-            g.drawImage(halfRestImage, xLocation, yLocation,20,30, null);
+            g.drawImage(halfRestImage, xLocation, yLocation, null);
+            if (selected){
+                g.drawRect(xLocation, yLocation, 20, 10);
+            }
         }
         if ((duration == 1) && (type.equals("Rest"))) {
-            g.drawImage(wholeRestImage, xLocation, yLocation, 20, 30, null);
+            g.drawImage(wholeRestImage, xLocation, yLocation,  null);
+            if (selected){
+                g.drawRect(xLocation, yLocation, 20, 10);
+            }
         }
     }
+
 }
